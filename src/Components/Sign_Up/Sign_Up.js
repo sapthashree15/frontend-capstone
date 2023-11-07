@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import './Sign_Up.css';
 import { Link, useNavigate } from 'react-router-dom';
 import { API_URL } from '../../config';
+
+import './Sign_Up.css'; // Apply css according to your design theme
 
 const Sign_up = () => {
     const [name, setName] = useState('');
@@ -17,8 +18,14 @@ const Sign_up = () => {
         e.preventDefault();
 
         // Validate name length
-        if (name.length <= 4) {
-            setShowerr('Name must be more than 4 letters.');
+        if (name.length < 5) {
+            setShowerr('Name should be at least 5 characters');
+            return;
+        }
+
+        // Validate phone number length
+        if (phone.length !== 10) {
+            setShowerr('Phone number should be 10 digits');
             return;
         }
 
@@ -28,10 +35,11 @@ const Sign_up = () => {
             return;
         }
 
+        // API Call
         const response = await fetch(`${API_URL}/api/auth/register`, {
-            method: "POST",
+            method: 'POST',
             headers: {
-                "Content-Type": "application/json",
+                'Content-Type': 'application/json',
             },
             body: JSON.stringify({
                 name: name,
@@ -44,12 +52,13 @@ const Sign_up = () => {
         const json = await response.json();
 
         if (json.authtoken) {
-            sessionStorage.setItem("auth-token", json.authtoken);
-            sessionStorage.setItem("name", name);
-            sessionStorage.setItem("phone", phone);
-            sessionStorage.setItem("email", email);
+            sessionStorage.setItem('auth-token', json.authtoken);
+            sessionStorage.setItem('name', name);
+            sessionStorage.setItem('phone', phone);
+            sessionStorage.setItem('email', email);
 
-            navigate("/");
+            // Redirect to home page
+            navigate('/');
             window.location.reload();
         } else {
             if (json.errors) {
@@ -69,26 +78,69 @@ const Sign_up = () => {
                     <h1>Sign Up</h1>
                 </div>
                 <div className="signup-text1" style={{ textAlign: 'left' }}>
-                    Already a member? <span><Link to="/login" style={{ color: '#2190FF' }}> Login</Link></span>
+                    Already a member?{' '}
+                    <span>
+                        <Link to="/login" style={{ color: '#2190FF' }}>
+                            Login
+                        </Link>
+                    </span>
                 </div>
                 <div className="signup-form">
                     <form method="POST" onSubmit={register}>
                         <div className="form-group">
                             <label htmlFor="name">Name</label>
-                            <input value={name} type="text" onChange={(e) => setName(e.target.value)} name="name" id="name" className="form-control" placeholder="Enter your name" aria-describedby="helpId" />
+                            <input
+                                value={name}
+                                type="text"
+                                onChange={(e) => setName(e.target.value)}
+                                name="name"
+                                id="name"
+                                className="form-control"
+                                placeholder="Enter your name"
+                                aria-describedby="helpId"
+                            />
                             {showerr && <div className="err" style={{ color: 'red' }}>{showerr}</div>}
                         </div>
                         <div className="form-group">
                             <label htmlFor="phone">Phone</label>
-                            <input value={phone} onChange={(e) => setPhone(e.target.value)} type="tel" name="phone" id="phone" className="form-control" placeholder="Enter your phone number" aria-describedby="helpId" />
+                            <input
+                                value={phone}
+                                onChange={(e) => setPhone(e.target.value)}
+                                type="tel"
+                                name="phone"
+                                id="phone"
+                                className="form-control"
+                                placeholder="Enter your phone number"
+                                aria-describedby="helpId"
+                            />
+                            {showerr && <div className="err" style={{ color: 'red' }}>{showerr}</div>}
                         </div>
                         <div className="form-group">
                             <label htmlFor="email">Email</label>
-                            <input value={email} onChange={(e) => setEmail(e.target.value)} type="email" name="email" id="email" className="form-control" placeholder="Enter your email" aria-describedby="helpId" />
+                            <input
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                type="email"
+                                name="email"
+                                id="email"
+                                className="form-control"
+                                placeholder="Enter your email"
+                                aria-describedby="helpId"
+                            />
+                            {showerr && <div className="err" style={{ color: 'red' }}>{showerr}</div>}
                         </div>
                         <div className="form-group">
                             <label htmlFor="password">Password</label>
-                            <input value={password} onChange={(e) => setPassword(e.target.value)} type='password' name="password" id="password" className="form-control" placeholder="Enter your password" aria-describedby="helpId" />
+                            <input
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                type="password"
+                                name="password"
+                                id="password"
+                                className="form-control"
+                                placeholder="Enter your password"
+                                aria-describedby="helpId"
+                            />
                             {passwordLengthError && password.length < 8 && (
                                 <div className="err" style={{ color: 'red' }}>Password length must be 8 or more</div>
                             )}
